@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\MedicoController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AtendimentoController;
 
 /*
@@ -17,9 +18,17 @@ use App\Http\Controllers\AtendimentoController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
-Route::resource('pacientes', PacienteController::class);
-Route::resource('medicos', MedicoController::class);
-Route::resource('atendimentos', AtendimentoController::class);
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::post('/login', [UserController::class, 'login'])->name('login');
+Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+
+Route::group(['middleware' => 'auth'], function(){
+    Route::resource('users', UserController::class);
+    Route::resource('medicos', MedicoController::class);
+    Route::resource('pacientes', PacienteController::class);
+    Route::resource('atendimentos', AtendimentoController::class);
+});
